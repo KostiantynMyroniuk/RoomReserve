@@ -17,4 +17,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RoomReserve.Infrastructure\RoomReserve.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

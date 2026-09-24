@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoomReserve.Domain.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,6 +19,16 @@ namespace RoomReserve.Domain.Models
             string name,
             decimal price)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new DomainException("Service name must not be empty.");
+            }
+
+            if (price < 0)
+            {
+                throw new DomainException("Service price cannot be negative.");
+            }
+
             return new Service
             {
                 Id = Guid.CreateVersion7(),
