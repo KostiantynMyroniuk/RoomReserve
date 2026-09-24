@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoomReserve.Domain.Interfaces;
-using RoomReserve.Domain.Models;
+using RoomReserve.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RoomReserve.Infrastructure.Persistence
+namespace RoomReserve.API.Infrastructure.Persistence
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {

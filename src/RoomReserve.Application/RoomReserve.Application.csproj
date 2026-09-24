@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RoomReserve.Domain\RoomReserve.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BusinessLogic\Bookings\Queries\" />
+  </ItemGroup>
+
 </Project>

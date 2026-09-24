@@ -1,0 +1,7 @@
+﻿namespace RoomReserve.API.Models.Common
+{
+    public record PaginatedList<T>(IReadOnlyCollection<T> Items, int PageNumber, int PageSize, int TotalCount)
+    {
+        public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
+    };
+}

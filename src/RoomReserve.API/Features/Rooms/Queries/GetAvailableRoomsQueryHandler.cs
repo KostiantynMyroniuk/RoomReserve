@@ -1,0 +1,97 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RoomReserve.API.Infrastructure.Persistence;
+using RoomReserve.API.Models.Common;
+using RoomReserve.Application.BusinessLogic.Rooms.Commands;
+using RoomReserve.Application.BusinessLogic.Rooms.Dtos;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
+{
+    public record GetAvailableRoomsQuery(
+        int PageNumber,
+        int PageSize,
+        DateOnly? Date,
+        TimeOnly? StartTime,
+        TimeOnly? EndTime,
+        int? Capacity) : IRequest<PaginatedList<RoomDto>>;
+
+    public class GetAvailableRoomsQueryHandler(
+        ApplicationDbContext context) : IRequestHandler<GetAvailableRoomsQuery, PaginatedList<RoomDto>>
+    {
+        public async Task<PaginatedList<RoomDto>> Handle(GetAvailableRoomsQuery request, CancellationToken cancellationToken)
+        {
+            var query = context.ConferenceRooms
+                .Include(r => r.Bookings)
+                .AsNoTracking();
+
+            //date filter
+            if (request.Date.HasValue)
+            {
+                query = query.Where(r => r.Bookings.Any(b => b.Date == request.Date.Value));
+            }
+
+            //time filter
+            if (request.StartTime.HasValue && request.EndTime.HasValue)
+            {
+                query = query.Where(r => r.Bookings.Any(b => b.StartTime < request.EndTime && b.EndTime > request.StartTime));
+            }
+
+            //capacity filter
+            if (request.Capacity.HasValue)
+            {
+                query = query.Where(r => r.Capacity >= request.Capacity.Value);
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            //pagination
+            var roomsPaginated = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(r => new RoomDto(
+                    r.Id,
+                    r.Name,
+                    r.Capacity,
+                    r.PricePerHour))
+                .ToListAsync(cancellationToken);
+
+            return new PaginatedList<RoomDto>(roomsPaginated, request.PageNumber, request.PageSize, totalCount);
+        }
+    }
+
+    public record GetAvailableRoomsRequest(
+        int PageNumber = 1,
+        int PageSize = 10,
+        DateOnly? Date = null,
+        TimeOnly? StartTime = null,
+        TimeOnly? EndTime = null,
+        int? Capacity = null);
+
+    public class GetAvailableRoomsEndpoint : IEndpoint
+    {
+        public void MapEndpoint(IEndpointRouteBuilder app)
+        {
+            app.MapGet("api/rooms/", async (
+                [AsParameters] GetAvailableRoomsRequest request,
+                ISender sender) =>
+            {
+                var result = await sender.Send(new GetAvailableRoomsQuery(
+                    request.PageNumber,
+                    request.PageSize,
+                    request.Date,
+                    request.StartTime,
+                    request.EndTime,
+                    request.Capacity
+                ));
+
+                return Results.Ok(result);
+            })
+            .WithName("GetAvailableRooms")
+            .WithTags("Rooms");
+        }
+    }
+}
