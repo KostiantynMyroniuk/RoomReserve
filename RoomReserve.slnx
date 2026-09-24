@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/RoomReserve.API/RoomReserve.API.csproj" Id="b8d254f2-e701-4707-b1a7-25602a97c6b1" />
+  <Project Path="src/RoomReserve.Application/RoomReserve.Application.csproj" Id="96f08079-e5a8-4645-9acb-e330496c526c" />
+  <Project Path="src/RoomReserve.Domain/RoomReserve.Domain.csproj" Id="804974bd-d0ec-4ac5-af77-567d3f9accdb" />
+  <Project Path="src/RoomReserve.Infrastructure/RoomReserve.Infrastructure.csproj" Id="d7e88054-3311-4427-a49a-dcf84d526be6" />
+</Solution>
