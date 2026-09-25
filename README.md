@@ -14,14 +14,14 @@ The service allows:
 
 | Category | Technology |
 |---|---|
-| Language / Platform | C# 13, **.NET 10** |
-| Web Framework | ASP.NET Core **Minimal APIs** |
-| API Pattern | Vertical Slice Architecture, CQRS, **MediatR 14** |
-| ORM | **Entity Framework Core 10**, Code First, Migrations |
-| Database | **Microsoft SQL Server 2022** |
-| Validation | **FluentValidation 12**, custom ValidationBehavior |
-| API Documentation | **Swashbuckle, Swagger, OpenAPI** |
-| Error Handling | IExceptionHandler, **ProblemDetails** |
+| Language | C# |
+| Platform | .NET 10 |
+| Framework | ASP.NET Core Minimal APIs |
+| Architecture | Vertical Slice Architecture, CQRS |
+| Libraries | MediatR, FluentValidation |
+| ORM | Entity Framework Core |
+| Database | SQL Server |
+| Documentation | Swagger, OpenAPI |
 | Containerization | Docker, Docker Compose |
 
 ## Architecture
