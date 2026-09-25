@@ -14,7 +14,8 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
         Guid RoomId,
         string Name,
         int Capacity,
-        decimal PricePerHour) : IRequest<Result<RoomDto>>;
+        decimal PricePerHour,
+        List<Guid> ServiceIds) : IRequest<Result<RoomDto>>;
 
     public class UpdateConferenceRoomCommandHandler(
         ApplicationDbContext context,
@@ -23,7 +24,6 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
         public async Task<Result<RoomDto>> Handle(UpdateConferenceRoomCommand request, CancellationToken cancellationToken)
         {
             var room = await context.ConferenceRooms
-                .Include(r => r.Services)
                 .FirstOrDefaultAsync(r => r.Id == request.RoomId, cancellationToken);
 
             if (room == null)
@@ -32,7 +32,20 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
                 return Result<RoomDto>.Failure(ResultError.NotFound($"Conference room {request.RoomId} not found."));
             }
 
-            room.UpdateRoomDetails(request.Name, request.Capacity, request.PricePerHour);
+            var services = await context.Services
+                .Where(s => request.ServiceIds.Contains(s.Id))
+                .ToListAsync(cancellationToken);
+
+            var missingServices = request.ServiceIds
+                .Except(services.Select(s => s.Id)).ToList();
+
+            if (missingServices.Any())
+            {
+                logger.LogWarning("Some services are missing: {MissingServices}", missingServices);
+                return Result<RoomDto>.Failure(ResultError.BadRequest($"Some services are missing: {string.Join(", ", missingServices)}"));
+            }
+
+            room.UpdateRoomDetails(request.Name, request.Capacity, request.PricePerHour, services);
 
             await context.SaveChangesAsync(cancellationToken);
 
@@ -53,7 +66,8 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
     public record UpdateRoomRequest(
         string Name,
         int Capacity,
-        decimal PricePerHour);
+        decimal PricePerHour,
+        List<Guid> ServiceIds);
 
     public class UpdateConferenceRoomEndpoint : IEndpoint
     {
@@ -68,7 +82,8 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
                     roomId,
                     request.Name,
                     request.Capacity,
-                    request.PricePerHour
+                    request.PricePerHour,
+                    request.ServiceIds ?? []
                 ));
 
                 if (result.IsSuccess)

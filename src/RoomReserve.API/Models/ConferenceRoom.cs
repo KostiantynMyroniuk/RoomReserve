@@ -46,7 +46,7 @@ namespace RoomReserve.API.Models
             };
         }
 
-        public void UpdateRoomDetails(string name, int capacity, decimal pricePerHour)
+        public void UpdateRoomDetails(string name, int capacity, decimal pricePerHour, IEnumerable<Service> services)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new DomainException("Room name must not be empty.");
@@ -60,6 +60,8 @@ namespace RoomReserve.API.Models
             Name = name;
             Capacity = capacity;
             PricePerHour = pricePerHour;
+
+            _services.AddRange(services);
         }
     }
 }
