@@ -20,6 +20,9 @@ namespace RoomReserve.API.Models
         private readonly List<Booking> _bookings = [];
         public IReadOnlyList<Booking> Bookings => _bookings.AsReadOnly();
 
+        [Timestamp]
+        public byte[] RowVersion { get; private set; } = default!;
+
         private ConferenceRoom()
         {
         }

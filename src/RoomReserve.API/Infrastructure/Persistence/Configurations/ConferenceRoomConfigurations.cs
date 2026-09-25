@@ -25,6 +25,9 @@ namespace RoomReserve.Infrastructure.Persistence.Configurations
                 .HasMany(r => r.Bookings)
                 .WithOne()
                 .HasForeignKey(b => b.RoomId);
+
+            builder.Property(r => r.RowVersion)
+                .IsRowVersion();
         }
     }
 }

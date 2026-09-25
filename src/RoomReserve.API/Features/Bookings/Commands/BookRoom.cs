@@ -36,6 +36,15 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
                 return Result<BookingDto>.Failure(ResultError.NotFound($"Room with id {request.RoomId} not found."));
             }
 
+            var hasOverlap = await context.Bookings
+                .Where(b => b.RoomId == request.RoomId && b.Date == request.Date)
+                .AnyAsync(b => request.StartTime < b.EndTime && request.EndTime > b.StartTime, cancellationToken);
+
+            if (hasOverlap)
+            {
+                return Result<BookingDto>.Failure(ResultError.Conflict("Room is already booked for this time slot."));
+            }
+
             var services = await context.Services
                 .AsNoTracking()
                 .Where(s => request.ServiceIds.Contains(s.Id))
@@ -49,15 +58,6 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
                 return Result<BookingDto>.Failure(ResultError.BadRequest($"Some services are missing: {string.Join(", ", missingServices)}"));
             }
 
-            var hasOverlap = await context.Bookings
-                .Where(b => b.RoomId == request.RoomId && b.Date == request.Date)
-                .AnyAsync(b => request.StartTime < b.EndTime && request.EndTime > b.StartTime, cancellationToken);
-
-            if (hasOverlap)
-            {
-                return Result<BookingDto>.Failure(ResultError.Conflict("Room is already booked for this time slot."));
-            }
-
             var booking = Booking.Create(
                 request.RoomId,
                 request.Date,
@@ -66,8 +66,17 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
                 room.PricePerHour,
                 services);
 
-            context.Bookings.Add(booking);
-            await context.SaveChangesAsync(cancellationToken);
+            // Saving the booking to the database with concurrency handling
+            try
+            {
+                context.Bookings.Add(booking);
+                await context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                logger.LogError(ex, "Concurrency error occurred while saving booking.");
+                return Result<BookingDto>.Failure(ResultError.Conflict("A concurrency error occurred while saving the booking."));
+            }
 
             return Result<BookingDto>.Success(new BookingDto(
                 booking.Id,
