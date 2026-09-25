@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".env" />
+    <File Path=".env.example" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/RoomReserve.API/RoomReserve.API.csproj" Id="b8d254f2-e701-4707-b1a7-25602a97c6b1" />

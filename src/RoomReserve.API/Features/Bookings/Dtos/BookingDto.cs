@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RoomReserve.Application.BusinessLogic.Bookings.Dtos
+namespace RoomReserve.API.Features.Bookings.Dtos
 {
     public record BookingDto(
         Guid Id, 

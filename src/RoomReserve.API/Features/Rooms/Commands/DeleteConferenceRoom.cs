@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Models.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
+namespace RoomReserve.API.Features.Rooms.Commands
 {
     public record DeleteConferenceRoomCommand(Guid RoomId) : IRequest<Result>;
 

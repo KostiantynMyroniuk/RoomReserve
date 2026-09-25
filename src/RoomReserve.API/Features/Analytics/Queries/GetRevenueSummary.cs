@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Features.Analytics.Dtos;
 using RoomReserve.API.Infrastructure.Persistence;
@@ -70,6 +71,20 @@ namespace RoomReserve.API.Features.Analytics.Queries
             .WithTags("Analytics")
             .WithSummary("Get the revenue summary within a specified date range.")
             .WithDescription("Gets the revenue summary for the specified date range.");
+        }
+    }
+
+    public class GetRevenueSummaryValidator : AbstractValidator<GetRevenueSummaryQuery>
+    {
+        public GetRevenueSummaryValidator()
+        {
+            RuleFor(x => x.StartDate)
+                .NotEmpty()
+                .LessThan(x => x.EndDate);
+
+            RuleFor(x => x.EndDate)
+                .NotEmpty()
+                .GreaterThan(x => x.StartDate);
         }
     }
 }

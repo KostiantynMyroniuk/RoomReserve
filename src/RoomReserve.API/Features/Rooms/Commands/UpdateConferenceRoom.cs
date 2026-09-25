@@ -4,12 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Models.Common;
-using RoomReserve.Application.BusinessLogic.Rooms.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using RoomReserve.API.Features.Rooms.Dtos;
 
-namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
+namespace RoomReserve.API.Features.Rooms.Commands
 {
     public record UpdateConferenceRoomCommand(
         Guid RoomId,

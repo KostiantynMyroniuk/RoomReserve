@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RoomReserve.Application.BusinessLogic.Rooms.Dtos
+namespace RoomReserve.API.Features.Rooms.Dtos
 {
     public record RoomServiceDto(
-        Guid serviceId,
-        string serviceName, 
-        decimal servicePrice);
+        Guid ServiceId,
+        string ServiceName, 
+        decimal ServicePrice);
 }

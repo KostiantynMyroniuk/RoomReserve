@@ -5,14 +5,8 @@ using RoomReserve.API.Features.Bookings.Dtos;
 using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Models;
 using RoomReserve.API.Models.Common;
-using RoomReserve.Application.BusinessLogic.Bookings.Dtos;
-using RoomReserve.Application.BusinessLogic.Rooms.Commands;
-using RoomReserve.Application.BusinessLogic.Rooms.Queries;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
+namespace RoomReserve.API.Features.Bookings.Commands
 {
     public record BookRoomCommand(
         Guid RoomId,
@@ -72,7 +66,7 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
                 context.Bookings.Add(booking);
                 await context.SaveChangesAsync(cancellationToken);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateConcurrencyException ex)
             {
                 logger.LogError(ex, "Concurrency error occurred while saving booking.");
                 return Result<BookingDto>.Failure(ResultError.Conflict("A concurrency error occurred while saving the booking."));

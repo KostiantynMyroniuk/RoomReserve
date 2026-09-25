@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Features.Analytics.Dtos;
 using RoomReserve.API.Infrastructure.Persistence;
@@ -42,7 +43,7 @@ namespace RoomReserve.API.Features.Analytics.Queries
                     x.TotalRevenue))
                 .ToListAsync(cancellationToken);
 
-            return serviceRevenue;  
+            return serviceRevenue;
         }
     }
 
@@ -68,6 +69,20 @@ namespace RoomReserve.API.Features.Analytics.Queries
             .WithTags("Analytics")
             .WithSummary("Get the room services revenue summary within a specified date range.")
             .WithDescription("Gets the room services revenue summary for the specified date range.");
+        }
+    }
+
+    public class GetRoomServiceRevenueValidator : AbstractValidator<GetRoomServiceRevenueQuery>
+    {
+        public GetRoomServiceRevenueValidator()
+        {
+            RuleFor(x => x.StartDate)
+                .NotEmpty()
+                .LessThan(x => x.EndDate);
+
+            RuleFor(x => x.EndDate)
+                .NotEmpty()
+                .GreaterThan(x => x.StartDate);
         }
     }
 }

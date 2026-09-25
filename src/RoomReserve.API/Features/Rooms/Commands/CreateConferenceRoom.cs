@@ -1,16 +1,11 @@
 ﻿using MediatR;
-using RoomReserve.Application.BusinessLogic.Rooms.Dtos;
 using RoomReserve.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Models.Common;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 
-namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
+namespace RoomReserve.API.Features.Rooms.Commands
 {
     public record CreateConferenceRoomCommand(
         string Name,
