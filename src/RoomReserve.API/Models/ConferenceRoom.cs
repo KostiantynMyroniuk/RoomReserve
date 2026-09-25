@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace RoomReserve.API.Models
@@ -61,7 +62,12 @@ namespace RoomReserve.API.Models
             Capacity = capacity;
             PricePerHour = pricePerHour;
 
-            _services.AddRange(services);
+            _services.Clear();
+
+            if (services != null)
+            {
+                _services.AddRange(services);
+            }
         }
     }
 }

@@ -24,8 +24,7 @@ namespace RoomReserve.Infrastructure.Persistence.Configurations
             builder
                 .HasMany(r => r.Bookings)
                 .WithOne()
-                .HasForeignKey(b => b.RoomId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(b => b.RoomId);
         }
     }
 }

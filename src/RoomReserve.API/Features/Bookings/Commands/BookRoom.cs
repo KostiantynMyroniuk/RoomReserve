@@ -113,7 +113,9 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
                 };
             })
             .WithName("BookRoom")
-            .WithTags("Bookings");
+            .WithTags("Bookings")
+            .WithSummary("Books a conference room")
+            .WithDescription("Books a specific conference room for a given date and time slot with the specified services.");
         }
     }
 

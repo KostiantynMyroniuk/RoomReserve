@@ -94,7 +94,9 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
                 return Results.Ok(result);
             })
             .WithName("GetAvailableRooms")
-            .WithTags("Rooms");
+            .WithTags("Rooms")
+            .WithSummary("Retrieves a list of available conference rooms")
+            .WithDescription("Retrieves a list of conference rooms that are available for booking based on the specified criteria.");
         }
     }
 
@@ -106,7 +108,8 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
                 .GreaterThan(0);
 
             RuleFor(r => r.PageSize)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .LessThanOrEqualTo(100);
 
             RuleFor(r => r.StartTime)
                 .LessThan(r => r.EndTime);

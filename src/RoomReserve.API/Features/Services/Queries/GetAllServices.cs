@@ -37,7 +37,9 @@ namespace RoomReserve.API.Features.Services.Queries
                 return Results.Ok(result);
             })
             .WithName("GetAllServices")
-            .WithTags("Services");
+            .WithTags("Services")
+            .WithSummary("Retrieves a list of all services")
+            .WithDescription("Retrieves a list of all available services in the system.");
         }
     }
 }

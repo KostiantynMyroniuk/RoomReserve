@@ -60,33 +60,6 @@ namespace RoomReserve.API.Models
             return booking;
         }
 
-        public void AddService(
-            Guid serviceId,
-            string serviceName,
-            decimal price)
-        {
-            if (_bookingServices.Any(x => x.ServiceId == serviceId))
-                throw new DomainException(
-                    $"Service '{serviceName}' is already added to this booking.");
-
-            _bookingServices.Add(BookingService.Create(
-                this.Id, 
-                serviceId,
-                serviceName,
-                price));
-
-            RecalculateTotalPrice();
-        }
-
-        public void RemoveService(Guid serviceId)
-        {
-            var bookingService = _bookingServices.FirstOrDefault(s => s.ServiceId == serviceId)
-                ?? throw new ServiceNotFoundException($"Service with ID {serviceId} is not part of this booking.");
-
-            _bookingServices.Remove(bookingService);
-            RecalculateTotalPrice();
-        }
-
         private void RecalculateTotalPrice()
         {
             var roomCost = PricingCalculator.CalculateRoomCost(StartTime, EndTime, RoomPricePerHour);

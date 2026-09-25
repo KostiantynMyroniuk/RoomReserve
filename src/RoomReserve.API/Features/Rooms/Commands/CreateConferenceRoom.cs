@@ -77,7 +77,9 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
                 return Results.BadRequest(result.Error?.Message);
             })
             .WithName("CreateRoom")
-            .WithTags("Rooms");
+            .WithTags("Rooms")
+            .WithSummary("Creates a new conference room")
+            .WithDescription("Creates a new conference room with the specified name, capacity, price, and assigned services.");
         }
     }
 

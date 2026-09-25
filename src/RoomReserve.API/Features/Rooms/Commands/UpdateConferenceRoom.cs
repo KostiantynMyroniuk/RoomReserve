@@ -93,10 +93,17 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
                     return Results.Ok(result.Value);
                 }
 
-                return Results.NotFound(result.Error?.Message);
+                return result.Error?.StatusCode switch
+                {
+                    StatusCodes.Status404NotFound => Results.NotFound(result.Error.Message),
+                    StatusCodes.Status400BadRequest => Results.BadRequest(result.Error.Message),
+                    _ => Results.Problem(result.Error?.Message)
+                };
             })
             .WithName("UpdateRoomInformation")
-            .WithTags("Rooms");
+            .WithTags("Rooms")
+            .WithSummary("Updates existing conference room details")
+            .WithDescription("Updates the name, capacity, price, and assigned services of a specific conference room by its unique ID.");
         }
     }
 

@@ -45,7 +45,9 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
                 return Results.NotFound(result.Error?.Message);
             })
             .WithName("DeleteRoom")
-            .WithTags("Rooms");
+            .WithTags("Rooms")
+            .WithSummary("Deletes a conference room")
+            .WithDescription("Deletes a specific conference room by its unique ID.");
         }
     }
 }
