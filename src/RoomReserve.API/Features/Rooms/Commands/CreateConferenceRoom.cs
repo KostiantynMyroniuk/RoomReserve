@@ -67,9 +67,9 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
 
                 if (result.IsSuccess)
                 {
-                    return Results.Created($"/api/rooms/{result}", new
+                    return Results.Created($"/api/rooms/{result.Value}", new
                     {
-                        Id = result
+                        Id = result.Value
                     });
                 }
 

@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Bookings\Queries\" />
+    <Folder Include="Features\Services\Commands\" />
   </ItemGroup>
 
 </Project>
