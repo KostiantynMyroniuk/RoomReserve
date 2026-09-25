@@ -109,11 +109,7 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
                 .GreaterThan(0);
 
             RuleFor(r => r.StartTime)
-                .NotEmpty()
                 .LessThan(r => r.EndTime);
-
-            RuleFor(r => r.EndTime)
-                .NotEmpty();
 
             RuleFor(r => r.Capacity)
                 .GreaterThan(0);
