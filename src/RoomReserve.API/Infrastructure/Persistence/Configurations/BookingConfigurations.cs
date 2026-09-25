@@ -14,9 +14,13 @@ namespace RoomReserve.Infrastructure.Persistence.Configurations
             builder.Property(b => b.TotalPrice)
                 .HasPrecision(18, 2);
 
+            builder.Property(b => b.RoomPricePerHour)
+                .HasPrecision(18, 2);
+
             builder
                 .HasMany(b => b.BookingServices)
-                .WithMany();
+                .WithOne(bs => bs.Booking)
+                .HasForeignKey(bs => bs.BookingId);
         }
     }
 }

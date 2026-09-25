@@ -31,13 +31,15 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
             //date filter
             if (request.Date.HasValue)
             {
-                query = query.Where(r => r.Bookings.Any(b => b.Date == request.Date.Value));
+                query = query.Where(r => !r.Bookings.Any(b => b.Date == request.Date.Value));
             }
 
             //time filter
             if (request.StartTime.HasValue && request.EndTime.HasValue)
             {
-                query = query.Where(r => r.Bookings.Any(b => b.StartTime < request.EndTime && b.EndTime > request.StartTime));
+                query = query.Where(r => !r.Bookings.Any(b => 
+                    b.StartTime < request.EndTime && 
+                    b.EndTime > request.StartTime));
             }
 
             //capacity filter
@@ -50,6 +52,7 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
 
             //pagination
             var roomsPaginated = await query
+                .OrderBy(r => r.Name)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(r => new RoomDto(

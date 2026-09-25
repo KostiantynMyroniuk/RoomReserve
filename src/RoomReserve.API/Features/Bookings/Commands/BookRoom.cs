@@ -35,6 +35,7 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
             }
 
             var services = await context.Services
+                .AsNoTracking()
                 .Where(s => request.ServiceIds.Contains(s.Id))
                 .ToListAsync(cancellationToken);
 
@@ -44,6 +45,15 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
             {
                 logger.LogWarning("Some services are missing: {MissingServices}", missingServices);
                 return Result<BookingDto>.Failure(ResultError.BadRequest($"Some services are missing: {string.Join(", ", missingServices)}"));
+            }
+
+            var hasOverlap = await context.Bookings
+                .Where(b => b.RoomId == request.RoomId && b.Date == request.Date)
+                .AnyAsync(b => request.StartTime < b.EndTime && request.EndTime > b.StartTime, cancellationToken);
+
+            if (hasOverlap)
+            {
+                return Result<BookingDto>.Failure(ResultError.Conflict("Room is already booked for this time slot."));
             }
 
             var booking = Booking.Create(
@@ -86,10 +96,19 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
                     request.Date,
                     request.StartTime,
                     request.EndTime,
-                    request.ServiceIds
+                    request.ServiceIds ?? []
                 ));
 
-                return Results.Ok(result);
+                if (result.IsSuccess)
+                    return Results.Ok(result.Value);
+
+                return result.Error?.StatusCode switch
+                {
+                    StatusCodes.Status404NotFound => Results.NotFound(result.Error.Message),
+                    StatusCodes.Status409Conflict => Results.Conflict(result.Error.Message),
+                    StatusCodes.Status400BadRequest => Results.BadRequest(result.Error.Message),
+                    _ => Results.Problem(result.Error?.Message)
+                };
             })
             .WithName("BookRoom")
             .WithTags("Bookings");
