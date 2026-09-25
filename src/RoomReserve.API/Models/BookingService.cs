@@ -1,4 +1,4 @@
-﻿using RoomReserve.API.Exceptions;
+﻿using RoomReserve.API.Models.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;
