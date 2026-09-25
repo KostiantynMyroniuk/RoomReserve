@@ -25,7 +25,6 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
         public async Task<PaginatedList<RoomDto>> Handle(GetAvailableRoomsQuery request, CancellationToken cancellationToken)
         {
             var query = context.ConferenceRooms
-                .Include(r => r.Bookings)
                 .AsNoTracking();
 
             //date filter
@@ -59,7 +58,12 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
                     r.Id,
                     r.Name,
                     r.Capacity,
-                    r.PricePerHour))
+                    r.PricePerHour,
+                    r.Services.Select(s => new RoomServiceDto(
+                        s.Id, 
+                        s.Name, 
+                        s.Price)).ToList()
+                ))
                 .ToListAsync(cancellationToken);
 
             return new PaginatedList<RoomDto>(roomsPaginated, request.PageNumber, request.PageSize, totalCount);

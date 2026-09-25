@@ -4,5 +4,8 @@ using System.Text;
 
 namespace RoomReserve.Application.BusinessLogic.Rooms.Dtos
 {
-    public record ServiceDto(Guid serviceId);
+    public record RoomServiceDto(
+        Guid serviceId,
+        string serviceName, 
+        decimal servicePrice);
 }

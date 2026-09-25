@@ -8,5 +8,6 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Dtos
         Guid Id,
         string Name,
         int Capacity,
-        decimal PricePerHour);
+        decimal PricePerHour,
+        List<RoomServiceDto> Services);
 }

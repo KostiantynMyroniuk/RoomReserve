@@ -23,6 +23,7 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
         public async Task<Result<RoomDto>> Handle(UpdateConferenceRoomCommand request, CancellationToken cancellationToken)
         {
             var room = await context.ConferenceRooms
+                .Include(r => r.Services)
                 .FirstOrDefaultAsync(r => r.Id == request.RoomId, cancellationToken);
 
             if (room == null)
@@ -39,7 +40,13 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
                 room.Id,
                 room.Name,
                 room.Capacity,
-                room.PricePerHour));
+                room.PricePerHour,
+                room.Services.Select(s => new RoomServiceDto(
+                    s.Id,
+                    s.Name,
+                    s.Price
+                )).ToList()
+            ));
         }
     }
 
