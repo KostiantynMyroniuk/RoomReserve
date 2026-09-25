@@ -21,6 +21,9 @@ namespace RoomReserve.Infrastructure.Persistence.Configurations
                 .HasMany(b => b.BookingServices)
                 .WithOne(bs => bs.Booking)
                 .HasForeignKey(bs => bs.BookingId);
+
+            builder
+                .HasIndex(b => new { b.RoomId, b.Date });
         }
     }
 }
