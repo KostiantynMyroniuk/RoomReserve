@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Infrastructure.Persistence;
@@ -24,6 +25,7 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
         public async Task<Result<RoomDto>> Handle(UpdateConferenceRoomCommand request, CancellationToken cancellationToken)
         {
             var room = await context.ConferenceRooms
+                .Include(r => r.Services)
                 .FirstOrDefaultAsync(r => r.Id == request.RoomId, cancellationToken);
 
             if (room == null)
@@ -95,6 +97,23 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
             })
             .WithName("UpdateRoomInformation")
             .WithTags("Rooms");
+        }
+    }
+
+    public class UpdateConferenceRoomValidator : AbstractValidator<UpdateConferenceRoomCommand>
+    {
+        public UpdateConferenceRoomValidator()
+        {
+            RuleFor(r => r.Name)
+                .NotEmpty()
+                .MaximumLength(200);
+
+            RuleFor(r => r.PricePerHour)
+                .NotNull()
+                .GreaterThan(0);
+
+            RuleFor(r => r.Capacity)
+                .GreaterThan(0);
         }
     }
 }

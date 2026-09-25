@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using RoomReserve.API.Infrastructure.Behaviors;
 using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Middlewares;
 using System.Text.Json.Nodes;
@@ -17,11 +19,16 @@ namespace RoomReserve.API.Extensions
 
         public static void AddServices(this IHostApplicationBuilder builder)
         {
+            builder.Services.AddValidatorsFromAssembly(typeof(Extensions).Assembly);
+
             builder.Services.AddMediatR(cfg =>
             {
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+
                 cfg.RegisterServicesFromAssembly(typeof(Extensions).Assembly);
             });
 
+            builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
         }

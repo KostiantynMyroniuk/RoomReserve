@@ -1,10 +1,12 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Features.Bookings.Dtos;
 using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Models;
 using RoomReserve.API.Models.Common;
 using RoomReserve.Application.BusinessLogic.Bookings.Dtos;
+using RoomReserve.Application.BusinessLogic.Rooms.Commands;
 using RoomReserve.Application.BusinessLogic.Rooms.Queries;
 using System;
 using System.Collections.Generic;
@@ -112,6 +114,19 @@ namespace RoomReserve.Application.BusinessLogic.Bookings.Commands
             })
             .WithName("BookRoom")
             .WithTags("Bookings");
+        }
+    }
+
+    public class BookRoomValidator : AbstractValidator<BookRoomCommand>
+    {
+        public BookRoomValidator()
+        {
+            RuleFor(r => r.StartTime)
+                .NotEmpty()
+                .LessThan(r => r.EndTime);
+
+            RuleFor(r => r.EndTime)
+                .NotEmpty();
         }
     }
 }

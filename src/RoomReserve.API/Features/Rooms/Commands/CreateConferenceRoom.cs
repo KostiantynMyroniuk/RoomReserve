@@ -8,6 +8,7 @@ using RoomReserve.API.Infrastructure.Persistence;
 using RoomReserve.API.Models.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 
 namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
 {
@@ -77,6 +78,22 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Commands
             })
             .WithName("CreateRoom")
             .WithTags("Rooms");
+        }
+    }
+
+    public class CreateConferenceRoomValidator : AbstractValidator<CreateConferenceRoomCommand>
+    {
+        public CreateConferenceRoomValidator()
+        {
+            RuleFor(r => r.Name)
+                .NotEmpty()
+                .MaximumLength(200);
+
+            RuleFor(r => r.PricePerHour)
+                .GreaterThan(0);
+
+            RuleFor(r => r.Capacity)
+                .GreaterThan(0);
         }
     }
 }

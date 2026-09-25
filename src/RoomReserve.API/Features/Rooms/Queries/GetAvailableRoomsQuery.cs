@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoomReserve.API.Infrastructure.Persistence;
@@ -27,18 +28,13 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
             var query = context.ConferenceRooms
                 .AsNoTracking();
 
-            //date filter
-            if (request.Date.HasValue)
+            //date and time filter 
+            if (request.Date.HasValue && request.StartTime.HasValue && request.EndTime.HasValue)
             {
-                query = query.Where(r => !r.Bookings.Any(b => b.Date == request.Date.Value));
-            }
-
-            //time filter
-            if (request.StartTime.HasValue && request.EndTime.HasValue)
-            {
-                query = query.Where(r => !r.Bookings.Any(b => 
-                    b.StartTime < request.EndTime && 
-                    b.EndTime > request.StartTime));
+                query = query.Where(r => !r.Bookings.Any(b =>
+                    b.Date == request.Date.Value &&
+                    b.StartTime < request.EndTime.Value &&
+                    b.EndTime > request.StartTime.Value));
             }
 
             //capacity filter
@@ -99,6 +95,28 @@ namespace RoomReserve.Application.BusinessLogic.Rooms.Queries
             })
             .WithName("GetAvailableRooms")
             .WithTags("Rooms");
+        }
+    }
+
+    public class GetAvailableRoomsValidator : AbstractValidator<GetAvailableRoomsQuery>
+    {
+        public GetAvailableRoomsValidator()
+        {
+            RuleFor(r => r.PageNumber)
+                .GreaterThan(0);
+
+            RuleFor(r => r.PageSize)
+                .GreaterThan(0);
+
+            RuleFor(r => r.StartTime)
+                .NotEmpty()
+                .LessThan(r => r.EndTime);
+
+            RuleFor(r => r.EndTime)
+                .NotEmpty();
+
+            RuleFor(r => r.Capacity)
+                .GreaterThan(0);
         }
     }
 }
